@@ -13,7 +13,7 @@ def generate_launch_description():
             name='underwater_detector',
             output='screen',
             parameters=[{
-                'weights':    os.path.expanduser('~/EE5271-Final-Project-AFNR/yolov9/best.pt'),
+                'weights':    os.path.join(os.path.dirname(__file__), '..', 'underwater_detector', 'models', 'best.onnx'),
                 'imgsz':      640,
                 'conf_thres': 0.25,
                 'iou_thres':  0.45,
