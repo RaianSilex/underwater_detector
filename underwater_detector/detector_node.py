@@ -60,8 +60,7 @@ class UnderwaterDetector(Node):
         self.imgsz  = (imgsz, imgsz)
         self.bridge = CvBridge()
 
-        providers = ['CUDAExecutionProvider', 'CPUExecutionProvider'] \
-            if device == 'cuda' else ['CPUExecutionProvider']
+        providers = ['CUDAExecutionProvider', 'CPUExecutionProvider'] if device == 'cuda' else ['CPUExecutionProvider']
         self.session = ort.InferenceSession(weights, providers=providers)
         self.input_name = self.session.get_inputs()[0].name
         self.get_logger().info(f"Model loaded | providers={self.session.get_providers()}")
