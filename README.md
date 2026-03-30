@@ -97,8 +97,9 @@ ros2 run underwater_detector target_pose_node
 |-----------|-------|------|-------------|
 | Subscribes | `/zed/zed_node/left/image_rect_color` | `sensor_msgs/Image` | ZED rectified image |
 | Subscribes | `/zed/zed_node/left/camera_info` | `sensor_msgs/CameraInfo` | ZED intrinsics |
-| Publishes | `/target/pose` | `geometry_msgs/PoseStamped` | 6-DOF target pose in camera frame |
-| Publishes | `/target/pose_image` | `sensor_msgs/Image` | Pose visualisation with axes drawn |
+| Subscribes | `/detections/json` | `std_msgs/String` | YOLO detections (used to crop ROI per target) |
+| Publishes | `/targets/poses` | `geometry_msgs/PoseArray` | 6-DOF pose of every visible target in camera frame |
+| Publishes | `/targets/pose_image` | `sensor_msgs/Image` | Pose visualisation with bounding boxes and axes drawn |
 
 ---
 
@@ -129,9 +130,10 @@ ros2 run underwater_detector target_pose_node
 
 | Parameter | Default | Description |
 |-----------|---------|-------------|
-| `marker_id` | `3` | ArUco ID affixed to the target object |
+| `marker_id` | `3` | ArUco ID affixed to every target object |
 | `aruco_dict_id` | `0` | ArUco dictionary (`0` = DICT_4X4_50) |
 | `marker_size` | `0.10` | Printed marker side length in metres |
+| `conf_threshold` | `0.30` | Min YOLO confidence before ArUco search |
 | `marker_to_target_rpy_deg` | `[0.0, 0.0, 0.0]` | Intrinsic XYZ Euler (deg) rotating marker frame to target body frame |
 
 ---
@@ -169,4 +171,4 @@ Printable marker PDFs (DICT_4X4_50) are in [`aruco_markers/`](aruco_markers/).
 
 Measure the printed marker size (black border edge to edge) and update `marker_size` in the launch file accordingly.
 
-> All four markers use the same dictionary (`DICT_4X4_50`).  IDs 0–2 are reserved for LoCo; ID 3 is reserved for the target object.  Do not reuse IDs across objects in the same scene.
+> All four markers use the same dictionary (`DICT_4X4_50`).  IDs 0–2 are reserved for LoCo; ID 3 is shared by all non-LoCo target objects — each target in the scene should carry one ID 3 marker.  Do not reuse IDs 0–2 on non-LoCo objects.
